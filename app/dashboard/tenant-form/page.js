@@ -1,9 +1,10 @@
   "use client"
 import { db } from "@/config/firebase.config";
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { addDoc, collection } from "firebase/firestore";
 import { useFormik } from "formik";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 import * as yup from "yup";
 
 const schema = yup.object().shape({
@@ -18,8 +19,12 @@ const schema = yup.object().shape({
 });
 
 export default function TenantForm () {
+    const [open, setOpen] = useState(false);
     const {data : session} = useSession();
-    console.log(session)
+    // console.log(session)
+    const handleClose = () =>{
+        setOpen(false);
+    };
 
     const {handleSubmit,handleChange,handleBlur,touched,values,errors } = useFormik({
         initialValues: {
@@ -45,11 +50,12 @@ export default function TenantForm () {
                 notes: values.notes,
                 timeCreated : new Date().getTime(),
                }).then(()=>{
-                 alert("You have submitted successfully")
+                  setOpen(true)
                  resetForm()
                })
                .catch(e =>{
                  console.error(e)
+                 setOpen(false);
                  alert("Unable to submit")
                }) 
         },
@@ -182,6 +188,18 @@ export default function TenantForm () {
                  </div>
 
              </form>
+                {/* Success dialog */}
+             <Dialog open={open} onClose={handleClose} >
+                <DialogTitle>Success</DialogTitle>
+                <DialogContent>
+                     <Typography>Tenant added succesfully</Typography>
+                </DialogContent>
+                <DialogActions>
+                     <Button onClick={handleClose}  color="primary"  variant="contained" autoFocus>
+                        Close
+                     </Button>
+                </DialogActions>
+             </Dialog>
        
           </main>
      )

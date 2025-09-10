@@ -12,7 +12,7 @@ export default async function Profile() {
                          <Image
                          width={80}
                          height={80}
-                         src="/mybg.jpg"
+                         src={session?.user?.image}
                          alt="profile-image"
                          className="w-[80px] h-[80px] rounded-full"
                          />
